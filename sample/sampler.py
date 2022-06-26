@@ -1,16 +1,15 @@
 import json
 import time
 import urllib.parse
-from tqdm import tqdm
 
+import folium
 import pandas as pd
 import requests
-
-API_KEY = "AIzaSyCMxTwdZjKZLgavf0Nx-qHE89daaYT0ZvE"
-
+from folium import plugins
+from tqdm import tqdm
+from .utils import basemaps
 
 class Sampler:
-
     def __init__(
         self,
         language: str = "en",
@@ -38,21 +37,39 @@ class Sampler:
         response = requests.request("GET", url, headers=headers, data=payload)
         response_json = json.loads(response.text)
         if response_json["result"]:
-            df= pd.json_normalize(response_json["result"], max_level=2)
-            keys =  ["place_id", "international_phone_number", "website", "address_components", "price_level"]
+            df = pd.json_normalize(response_json["result"], max_level=2)
+            keys = [
+                "place_id",
+                "international_phone_number",
+                "website",
+                "address_components",
+                "price_level",
+            ]
             keys = [key for key in keys if key in df.columns]
             df = df[keys]
-            address_components	= df['address_components'][0]
-            address_components	= pd.json_normalize(df['address_components'][0])
-            address_components['types']	= address_components['types'].apply(lambda x: str(x[0]))
-            df['postal_code'] = address_components['long_name'][address_components['types'].loc[lambda x: x=='postal_code'].index].item()
-            df['locality'] = address_components['long_name'][address_components['types'].loc[lambda x: x=='locality'].index].item()
-            df['country'] = address_components['long_name'][address_components['types'].loc[lambda x: x=='country'].index].item()
-            df['country_code'] = address_components['short_name'][address_components['types'].loc[lambda x: x=='country'].index].item()
-            df.drop(labels='address_components', axis=1, inplace=True)
-        return df 
+            address_components = df["address_components"][0]
+            address_components = pd.json_normalize(df["address_components"][0])
+            address_components["types"] = address_components["types"].apply(
+                lambda x: str(x[0])
+            )
+            df["postal_code"] = address_components["long_name"][
+                address_components["types"].loc[lambda x: x == "postal_code"].index
+            ].item()
+            df["locality"] = address_components["long_name"][
+                address_components["types"].loc[lambda x: x == "locality"].index
+            ].item()
+            df["country"] = address_components["long_name"][
+                address_components["types"].loc[lambda x: x == "country"].index
+            ].item()
+            df["country_code"] = address_components["short_name"][
+                address_components["types"].loc[lambda x: x == "country"].index
+            ].item()
+            df.drop(labels="address_components", axis=1, inplace=True)
+        return df
 
-    def text_search(self, queries: list = [], extra_details: bool = False) -> pd.DataFrame:
+    def text_search(
+        self, queries: list = [], extra_details: bool = False
+    ) -> pd.DataFrame:
         results = []
         payload = {}
         headers = {}
@@ -82,32 +99,50 @@ class Sampler:
                         ]
                     ]
                     results.append(df)
-                    break
         df = pd.concat(results, ignore_index=True)
         df = df.loc[df.astype(str).drop_duplicates().index]
         df.reset_index(drop=True, inplace=True)
-        if extra_details: 
-            temp = [] 
+        if extra_details:
+            temp = []
             for index, row in df.iterrows():
-                s = self._get_place_details(row['place_id'])
+                s = self._get_place_details(row["place_id"])
                 temp.append(s)
             temp_df = pd.concat(temp)
-            population = df.merge(temp_df, how='inner', on='place_id')
-            self.population = population 
-            return population 
-        else: 
+            population = df.merge(temp_df, how="inner", on="place_id")
+            self.population = population
+            return population
+        else:
             self.population = df
-            return df 
+            return df
 
-    def random_sample(self, *args, **kwargs) -> pd.DataFrame: 
-        return self.population.sample( *args, **kwargs)
+    def random_sample(self, *args, **kwargs) -> pd.DataFrame:
+        self.random_sample = self.population.sample(*args, **kwargs)
+        return self.random_sample
 
-    def stratified_sample(self, columns: list = [], *args, **kwargs)  -> pd.DataFrame: 
-        return self.population.groupby(columns, group_keys=True).apply(lambda x: x.sample(*args, **kwargs))
-    
+    def stratified_sample(self, columns: list = [], *args, **kwargs) -> pd.DataFrame:
+        self.stratified_sample = self.population.groupby(
+           by=columns, group_keys=True
+        ).apply(lambda x: x.sample(*args, **kwargs))
+        return self.stratified_sample
 
-
-
-        
-
-
+    def map(
+        self,
+        location: list = [41.38, 2.16],
+        data: pd.DataFrame = None, 
+        map_tiles: list = ['Google Maps'],
+        *args,
+        **kwargs,
+    ):
+        m = folium.Map(location=location, *args, **kwargs)
+        for tile_layer in map_tiles:
+            basemaps[tile_layer].add_to(m)
+        m.add_child(folium.LayerControl())
+        plugins.Fullscreen().add_to(m)
+        for i in range(len(data)):
+            folium.Marker(
+                location=[data.iloc[i]["geometry.location.lat"], data.iloc[i]["geometry.location.lng"]],
+                popup=data.iloc[i]["name"],
+                icon=folium.Icon(color="red"),
+            ).add_to(m)
+        self.m = m
+        return m

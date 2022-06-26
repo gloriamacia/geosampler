@@ -1,8 +1,4 @@
-import json
 import folium
-import pandas as pd 
-import requests
-
 
 basemaps = {
     'Google Maps': folium.TileLayer(
