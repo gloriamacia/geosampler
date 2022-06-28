@@ -1,3 +1,5 @@
+__all__ = ['Sampler']
+
 import json
 import time
 import urllib.parse
@@ -12,28 +14,32 @@ from .utils import basemaps
 class Sampler:
     def __init__(
         self,
+        api_key: str,
         language: str = "en",
-        location: str = "",
+        keyword: str = "",
         maxprice: str = "",
         minprice: str = "",
         opennow: str = "",
         radius: str = "",
         region: str = "",
         type_: str = "",
+        rankby: str = "distance"
     ):
+        self.api_key = api_key
         self.language = language
-        self.location = location
+        self.keyword = keyword
         self.maxprice = maxprice
         self.minprice = minprice
         self.opennow = opennow
         self.radius = radius
         self.region = region
         self.type_ = type_
+        self.rankby = rankby
 
     def _get_place_details(self, place_id: str) -> pd.Series:
         payload = {}
         headers = {}
-        url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={API_KEY}"
+        url = f"https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&key={self.api_key}"
         response = requests.request("GET", url, headers=headers, data=payload)
         response_json = json.loads(response.text)
         if response_json["result"]:
@@ -67,20 +73,22 @@ class Sampler:
             df.drop(labels="address_components", axis=1, inplace=True)
         return df
 
-    def text_search(
-        self, queries: list = [], extra_details: bool = False
+    def nearby_search(
+        self, locations: list = [], extra_details: bool = False
     ) -> pd.DataFrame:
-        results = []
         payload = {}
         headers = {}
-        for query in tqdm(queries):
-            print(f"Retrieving population for query: {query}")
+        results = []
+        for location in tqdm(locations):
+            print(f"Retrieving population at location: {location}")
             pagetoken = ""
-            query = urllib.parse.quote(query)
-            while pagetoken is not None:
-                url = f"https://maps.googleapis.com/maps/api/place/textsearch/json?query={query}&key={API_KEY}&language={self.language}&location={self.location}&maxprice={self.maxprice}&minprice={self.minprice}&opennow={self.opennow}&radius={self.radius}&region={self.region}&type={self.type_}&pagetoken={pagetoken}"
+            location = urllib.parse.quote(location)
+            page = 1
+            while pagetoken is not None and page <=3:
+                print(f"page {page}")
+                url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&rankby=distance&pagetoken={pagetoken}&key={self.api_key}"
                 response = requests.request("GET", url, headers=headers, data=payload)
-                time.sleep(2)
+                time.sleep(3)
                 response_json = json.loads(response.text)
                 pagetoken = response_json.get("next_page_token", None)
                 if response_json["results"]:
@@ -90,7 +98,7 @@ class Sampler:
                         [
                             "place_id",
                             "name",
-                            "formatted_address",
+                            "vicinity",
                             "geometry.location.lat",
                             "geometry.location.lng",
                             "types",
@@ -99,8 +107,9 @@ class Sampler:
                         ]
                     ]
                     results.append(df)
-        df = pd.concat(results, ignore_index=True)
-        df = df.loc[df.astype(str).drop_duplicates().index]
+                    page += 1 
+        df = pd.concat(results, ignore_index=True)  
+        df = df.loc[df.astype(str).drop_duplicates(subset='place_id').index]
         df.reset_index(drop=True, inplace=True)
         if extra_details:
             temp = []
@@ -127,22 +136,26 @@ class Sampler:
 
     def map(
         self,
+        datasets: list, 
+        colors: list,
+        icons: list,
         location: list = [41.38, 2.16],
-        data: pd.DataFrame = None, 
         map_tiles: list = ['Google Maps'],
-        *args,
+        zoom_start: int = 15,
+       *args,
         **kwargs,
     ):
-        m = folium.Map(location=location, *args, **kwargs)
+        m = folium.Map(location=location, zoom_start=zoom_start, *args, **kwargs)
         for tile_layer in map_tiles:
             basemaps[tile_layer].add_to(m)
         m.add_child(folium.LayerControl())
         plugins.Fullscreen().add_to(m)
-        for i in range(len(data)):
-            folium.Marker(
-                location=[data.iloc[i]["geometry.location.lat"], data.iloc[i]["geometry.location.lng"]],
-                popup=data.iloc[i]["name"],
-                icon=folium.Icon(color="red"),
-            ).add_to(m)
+        for df, c, icon in zip(datasets, colors, icons):
+            for i in range(len(df)):
+                folium.Marker(
+                    location=[df.iloc[i]["geometry.location.lat"], df.iloc[i]["geometry.location.lng"]],
+                    popup=df.iloc[i]["name"],
+                    icon=folium.Icon(color=c, prefix='fa', icon=icon),
+                ).add_to(m)
         self.m = m
         return m
