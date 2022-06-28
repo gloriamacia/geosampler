@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sample"
+name = "geosampler"
 version = "0.1.0"
 description = "A simple way to collect samples for social sciences experiments"
 authors = ["Gloria Macia <gloria.macia@roche.com>"]
