@@ -5,7 +5,7 @@ description = "A simple way to collect samples for social sciences experiments"
 authors = ["Gloria Macia <gloria.macia@roche.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.7"
 requests = "^2.28.0"
 pandas = "^1.4.3"
 folium = "^0.12.1"

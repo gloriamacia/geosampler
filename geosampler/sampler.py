@@ -1,4 +1,4 @@
-__all__ = ['Sampler']
+__all__ = ["Sampler"]
 
 import json
 import time
@@ -10,6 +10,7 @@ import requests
 from folium import plugins
 from tqdm import tqdm
 from .utils import basemaps
+
 
 class Sampler:
     def __init__(
@@ -23,7 +24,7 @@ class Sampler:
         radius: str = "",
         region: str = "",
         type_: str = "",
-        rankby: str = "distance"
+        rankby: str = "distance",
     ):
         self.api_key = api_key
         self.language = language
@@ -74,7 +75,7 @@ class Sampler:
         return df
 
     def nearby_search(
-        self, locations: list = [], extra_details: bool = False
+        self, locations: list = [], extra_details: bool = False, keyword: str = None
     ) -> pd.DataFrame:
         payload = {}
         headers = {}
@@ -84,9 +85,12 @@ class Sampler:
             pagetoken = ""
             location = urllib.parse.quote(location)
             page = 1
-            while pagetoken is not None and page <=3:
+            while pagetoken is not None and page <= 3:
                 print(f"page {page}")
-                url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&rankby=distance&pagetoken={pagetoken}&key={self.api_key}"
+                if keyword:
+                    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&keyword={keyword}&rankby=distance&pagetoken={pagetoken}&key={self.api_key}"
+                else:
+                    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&rankby=distance&pagetoken={pagetoken}&key={self.api_key}"
                 response = requests.request("GET", url, headers=headers, data=payload)
                 time.sleep(3)
                 response_json = json.loads(response.text)
@@ -107,9 +111,9 @@ class Sampler:
                         ]
                     ]
                     results.append(df)
-                    page += 1 
-        df = pd.concat(results, ignore_index=True)  
-        df = df.loc[df.astype(str).drop_duplicates(subset='place_id').index]
+                    page += 1
+        df = pd.concat(results, ignore_index=True)
+        df = df.loc[df.astype(str).drop_duplicates(subset="place_id").index]
         df.reset_index(drop=True, inplace=True)
         if extra_details:
             temp = []
@@ -130,19 +134,19 @@ class Sampler:
 
     def stratified_sample(self, columns: list = [], *args, **kwargs) -> pd.DataFrame:
         self.stratified_sample = self.population.groupby(
-           by=columns, group_keys=True
+            by=columns, group_keys=True
         ).apply(lambda x: x.sample(*args, **kwargs))
         return self.stratified_sample
 
     def map(
         self,
-        datasets: list, 
+        datasets: list,
         colors: list,
         icons: list,
         location: list = [41.38, 2.16],
-        map_tiles: list = ['Google Maps'],
+        map_tiles: list = ["Google Maps"],
         zoom_start: int = 15,
-       *args,
+        *args,
         **kwargs,
     ):
         m = folium.Map(location=location, zoom_start=zoom_start, *args, **kwargs)
@@ -153,9 +157,12 @@ class Sampler:
         for df, c, icon in zip(datasets, colors, icons):
             for i in range(len(df)):
                 folium.Marker(
-                    location=[df.iloc[i]["geometry.location.lat"], df.iloc[i]["geometry.location.lng"]],
+                    location=[
+                        df.iloc[i]["geometry.location.lat"],
+                        df.iloc[i]["geometry.location.lng"],
+                    ],
                     popup=df.iloc[i]["name"],
-                    icon=folium.Icon(color=c, prefix='fa', icon=icon),
+                    icon=folium.Icon(color=c, prefix="fa", icon=icon),
                 ).add_to(m)
         self.m = m
         return m
