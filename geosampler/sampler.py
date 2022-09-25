@@ -1,5 +1,6 @@
 __all__ = ["Sampler"]
 
+from ast import expr_context
 import json
 import time
 import urllib.parse
@@ -22,9 +23,8 @@ class Sampler:
         minprice: str = "",
         opennow: str = "",
         radius: str = "",
-        region: str = "",
         type_: str = "",
-        rankby: str = "distance",
+        rankby: str = "prominence",
     ):
         self.api_key = api_key
         self.language = language
@@ -59,23 +59,35 @@ class Sampler:
             address_components["types"] = address_components["types"].apply(
                 lambda x: str(x[0])
             )
-            df["postal_code"] = address_components["long_name"][
-                address_components["types"].loc[lambda x: x == "postal_code"].index
-            ].item()
-            df["locality"] = address_components["long_name"][
-                address_components["types"].loc[lambda x: x == "locality"].index
-            ].item()
-            df["country"] = address_components["long_name"][
-                address_components["types"].loc[lambda x: x == "country"].index
-            ].item()
-            df["country_code"] = address_components["short_name"][
-                address_components["types"].loc[lambda x: x == "country"].index
-            ].item()
+            try:
+                df["postal_code"] = address_components["long_name"][
+                    address_components["types"].loc[lambda x: x == "postal_code"].index
+                ].item()
+            except: 
+                df["postal_code"] = ""
+            try: 
+                df["locality"] = address_components["long_name"][
+                    address_components["types"].loc[lambda x: x == "locality"].index
+                ].item()
+            except: 
+                df["locality"] = ""
+            try:
+                df["country"] = address_components["long_name"][
+                    address_components["types"].loc[lambda x: x == "country"].index
+                ].item()
+            except: 
+                df["country"] = ""
+            try: 
+                df["country_code"] = address_components["short_name"][
+                    address_components["types"].loc[lambda x: x == "country"].index
+                ].item()
+            except: 
+                df["country_code"] = ""
             df.drop(labels="address_components", axis=1, inplace=True)
         return df
 
     def nearby_search(
-        self, locations: list = [], extra_details: bool = False, keyword: str = None
+        self, locations: list = [], extra_details: bool = False
     ) -> pd.DataFrame:
         payload = {}
         headers = {}
@@ -87,10 +99,7 @@ class Sampler:
             page = 1
             while pagetoken is not None and page <= 3:
                 print(f"page {page}")
-                if keyword:
-                    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&keyword={keyword}&rankby=distance&pagetoken={pagetoken}&key={self.api_key}"
-                else:
-                    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&rankby=distance&pagetoken={pagetoken}&key={self.api_key}"
+                url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&keyword={self.keyword}&rankby={self.rankby}&pagetoken={pagetoken}&key={self.api_key}"
                 response = requests.request("GET", url, headers=headers, data=payload)
                 time.sleep(3)
                 response_json = json.loads(response.text)
@@ -128,14 +137,14 @@ class Sampler:
             self.population = df
             return df
 
-    def random_sample(self, *args, **kwargs) -> pd.DataFrame:
-        self.random_sample = self.population.sample(*args, **kwargs)
+    def random_sample(self, n: int = None, *args, **kwargs) -> pd.DataFrame:
+        self.random_sample = self.population.sample(n, *args, **kwargs)
         return self.random_sample
 
-    def stratified_sample(self, columns: list = [], *args, **kwargs) -> pd.DataFrame:
+    def stratified_sample(self, n:int = None, columns: list = [], *args, **kwargs) -> pd.DataFrame:
         self.stratified_sample = self.population.groupby(
             by=columns, group_keys=True
-        ).apply(lambda x: x.sample(*args, **kwargs))
+        ).apply(lambda x: x.sample(n, *args, **kwargs))
         return self.stratified_sample
 
     def map(
