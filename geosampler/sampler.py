@@ -22,7 +22,7 @@ class Sampler:
         maxprice: str = "",
         minprice: str = "",
         opennow: str = "",
-        radius: str = "",
+        radius: str = "5000",
         type_: str = "",
         rankby: str = "prominence",
     ):
@@ -33,7 +33,6 @@ class Sampler:
         self.minprice = minprice
         self.opennow = opennow
         self.radius = radius
-        self.region = region
         self.type_ = type_
         self.rankby = rankby
 
@@ -98,10 +97,10 @@ class Sampler:
             location = urllib.parse.quote(location)
             page = 1
             while pagetoken is not None and page <= 3:
-                print(f"page {page}")
-                url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&type={self.type_}&keyword={self.keyword}&rankby={self.rankby}&pagetoken={pagetoken}&key={self.api_key}"
+                print(f"Retrieving results from page {page}")
+                url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={location}&radius={self.radius}&type={self.type_}&keyword={self.keyword}&rankby={self.rankby}&pagetoken={pagetoken}&key={self.api_key}"
                 response = requests.request("GET", url, headers=headers, data=payload)
-                time.sleep(3)
+                time.sleep(2)
                 response_json = json.loads(response.text)
                 pagetoken = response_json.get("next_page_token", None)
                 if response_json["results"]:
@@ -131,21 +130,20 @@ class Sampler:
                 temp.append(s)
             temp_df = pd.concat(temp)
             population = df.merge(temp_df, how="inner", on="place_id")
-            self.population = population
             return population
         else:
-            self.population = df
             return df
 
-    def random_sample(self, n: int = None, *args, **kwargs) -> pd.DataFrame:
-        self.random_sample = self.population.sample(n, *args, **kwargs)
-        return self.random_sample
+    def random_sample(self, population: pd.DataFrame, n: int = None, *args, **kwargs) -> pd.DataFrame:
+        return population.sample(n, *args, **kwargs)
 
-    def stratified_sample(self, n:int = None, columns: list = [], *args, **kwargs) -> pd.DataFrame:
-        self.stratified_sample = self.population.groupby(
+
+    def stratified_sample(self, population: pd.DataFrame, n:int, columns: list, *args, **kwargs) -> pd.DataFrame:
+        ss = population.groupby(
             by=columns, group_keys=True
         ).apply(lambda x: x.sample(n, *args, **kwargs))
-        return self.stratified_sample
+        ss.reset_index(drop=True)
+        return ss 
 
     def map(
         self,

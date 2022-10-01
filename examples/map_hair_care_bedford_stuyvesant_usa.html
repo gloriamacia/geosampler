@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_8be213f9e78f36136ca7d5a8c3f39f4e {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.css"/>
+</head>
+<body>    
+    
+            <div class="folium-map" id="map_8be213f9e78f36136ca7d5a8c3f39f4e" ></div>
+        
+</body>
+<script>    
+    
+            var map_8be213f9e78f36136ca7d5a8c3f39f4e = L.map(
+                "map_8be213f9e78f36136ca7d5a8c3f39f4e",
+                {
+                    center: [40.688552, -73.939596],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 14,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_d0979ac52a24b84c435fc744744053fd = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var tile_layer_829d579fec42142ee8c4f289bee77c7c = L.tileLayer(
+                "https://mt1.google.com/vt/lyrs=m\u0026x={x}\u0026y={y}\u0026z={z}",
+                {"attribution": "powered by Google", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var layer_control_e0dae750503d0eee6d6729087557a39d = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_d0979ac52a24b84c435fc744744053fd,
+                },
+                overlays :  {
+                    "Google Maps" : tile_layer_829d579fec42142ee8c4f289bee77c7c,
+                },
+            };
+            L.control.layers(
+                layer_control_e0dae750503d0eee6d6729087557a39d.base_layers,
+                layer_control_e0dae750503d0eee6d6729087557a39d.overlays,
+                {"autoZIndex": true, "collapsed": true, "position": "topright"}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            L.control.fullscreen(
+                {"forceSeparateButton": false, "position": "topleft", "title": "Full Screen", "titleCancel": "Exit Full Screen"}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var marker_259f14fedb8ba9e88e398f1d5d87740a = L.marker(
+                [40.69048599999999, -73.9517242],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_00b48873109f407d34acff74f6217e83 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_259f14fedb8ba9e88e398f1d5d87740a.setIcon(icon_00b48873109f407d34acff74f6217e83);
+        
+    
+        var popup_a80be5a694891babdbe198089199f9f1 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_b0d7053d5af7d4fe8d6c362b56865789 = $(`<div id="html_b0d7053d5af7d4fe8d6c362b56865789" style="width: 100.0%; height: 100.0%;">Heritage Tonsorial | Barber and Shave Parlor</div>`)[0];
+            popup_a80be5a694891babdbe198089199f9f1.setContent(html_b0d7053d5af7d4fe8d6c362b56865789);
+        
+
+        marker_259f14fedb8ba9e88e398f1d5d87740a.bindPopup(popup_a80be5a694891babdbe198089199f9f1)
+        ;
+
+        
+    
+    
+            var marker_46d9d0d997e1f29e41abc6055e6a357b = L.marker(
+                [40.6887693, -73.9394238],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_07a5757dcc44eb33f828229658a40a35 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_46d9d0d997e1f29e41abc6055e6a357b.setIcon(icon_07a5757dcc44eb33f828229658a40a35);
+        
+    
+        var popup_2a7c55b8a692aab8f02d798b4b7208cc = L.popup({"maxWidth": "100%"});
+
+        
+            var html_f2a8c6505ab731d300c4d9bd05007db6 = $(`<div id="html_f2a8c6505ab731d300c4d9bd05007db6" style="width: 100.0%; height: 100.0%;">Lord King Barbershop & Queens Hair Salon</div>`)[0];
+            popup_2a7c55b8a692aab8f02d798b4b7208cc.setContent(html_f2a8c6505ab731d300c4d9bd05007db6);
+        
+
+        marker_46d9d0d997e1f29e41abc6055e6a357b.bindPopup(popup_2a7c55b8a692aab8f02d798b4b7208cc)
+        ;
+
+        
+    
+    
+            var marker_82bbe04596d26bdde6fb59db11772c3b = L.marker(
+                [40.6928008, -73.94065309999999],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_cda3f2d53eac9ecd220cdd2911366244 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_82bbe04596d26bdde6fb59db11772c3b.setIcon(icon_cda3f2d53eac9ecd220cdd2911366244);
+        
+    
+        var popup_678da9c8fe54e98aa1812833741d0a56 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_c4a0356558ae93636fd5161b9e908229 = $(`<div id="html_c4a0356558ae93636fd5161b9e908229" style="width: 100.0%; height: 100.0%;">Heads Up Barbershop</div>`)[0];
+            popup_678da9c8fe54e98aa1812833741d0a56.setContent(html_c4a0356558ae93636fd5161b9e908229);
+        
+
+        marker_82bbe04596d26bdde6fb59db11772c3b.bindPopup(popup_678da9c8fe54e98aa1812833741d0a56)
+        ;
+
+        
+    
+    
+            var marker_84f19dce5e92cd7884a21c3f12ece090 = L.marker(
+                [40.6899215, -73.9365685],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_8f7b62bb58364b2408479a56b5804a7d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_84f19dce5e92cd7884a21c3f12ece090.setIcon(icon_8f7b62bb58364b2408479a56b5804a7d);
+        
+    
+        var popup_6e733acf36f22d06cf6ebf72d6c88644 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_95d8f12c164ffff1532f5f0bd28223e4 = $(`<div id="html_95d8f12c164ffff1532f5f0bd28223e4" style="width: 100.0%; height: 100.0%;">Rick's Barbershop</div>`)[0];
+            popup_6e733acf36f22d06cf6ebf72d6c88644.setContent(html_95d8f12c164ffff1532f5f0bd28223e4);
+        
+
+        marker_84f19dce5e92cd7884a21c3f12ece090.bindPopup(popup_6e733acf36f22d06cf6ebf72d6c88644)
+        ;
+
+        
+    
+    
+            var marker_8174fb95b687aacea67b41488d4aab23 = L.marker(
+                [40.69290809999999, -73.9367858],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_e8da35e48bfc3ed6960266eb5595f78a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_8174fb95b687aacea67b41488d4aab23.setIcon(icon_e8da35e48bfc3ed6960266eb5595f78a);
+        
+    
+        var popup_d24599b68c833ba49f895806f905e6e8 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_90bf3601ab4986dfad43aaf30adf25c8 = $(`<div id="html_90bf3601ab4986dfad43aaf30adf25c8" style="width: 100.0%; height: 100.0%;">Family Barbershop Unisex & Phone Shop</div>`)[0];
+            popup_d24599b68c833ba49f895806f905e6e8.setContent(html_90bf3601ab4986dfad43aaf30adf25c8);
+        
+
+        marker_8174fb95b687aacea67b41488d4aab23.bindPopup(popup_d24599b68c833ba49f895806f905e6e8)
+        ;
+
+        
+    
+    
+            var marker_97ffcdab9896b2a97368293543ef0415 = L.marker(
+                [40.6825284, -73.9407205],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_15a16a1783c383b3b06ce6d5242f5498 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_97ffcdab9896b2a97368293543ef0415.setIcon(icon_15a16a1783c383b3b06ce6d5242f5498);
+        
+    
+        var popup_2ad309ddfdeafc82fb224e1cf8f19a10 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_63d8f461fa495b495b413ef7106380d8 = $(`<div id="html_63d8f461fa495b495b413ef7106380d8" style="width: 100.0%; height: 100.0%;">Mr. Kelly's Barber Shop</div>`)[0];
+            popup_2ad309ddfdeafc82fb224e1cf8f19a10.setContent(html_63d8f461fa495b495b413ef7106380d8);
+        
+
+        marker_97ffcdab9896b2a97368293543ef0415.bindPopup(popup_2ad309ddfdeafc82fb224e1cf8f19a10)
+        ;
+
+        
+    
+    
+            var marker_07d8131c2132fb60e5cf55ba2a1621bb = L.marker(
+                [40.6827628, -73.93814100000002],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_924401ca7a3fc57dba4f306b939614e1 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_07d8131c2132fb60e5cf55ba2a1621bb.setIcon(icon_924401ca7a3fc57dba4f306b939614e1);
+        
+    
+        var popup_9e0b72219f708ffede62dd3335516593 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_edca6094fda6778a798d72a024a2728b = $(`<div id="html_edca6094fda6778a798d72a024a2728b" style="width: 100.0%; height: 100.0%;">Bey's Barbershop</div>`)[0];
+            popup_9e0b72219f708ffede62dd3335516593.setContent(html_edca6094fda6778a798d72a024a2728b);
+        
+
+        marker_07d8131c2132fb60e5cf55ba2a1621bb.bindPopup(popup_9e0b72219f708ffede62dd3335516593)
+        ;
+
+        
+    
+    
+            var marker_389881dfc571907c8777d914c3ca3ecb = L.marker(
+                [40.6821904, -73.938058],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_955abb609dbcc293aecd68c982b1b8de = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_389881dfc571907c8777d914c3ca3ecb.setIcon(icon_955abb609dbcc293aecd68c982b1b8de);
+        
+    
+        var popup_0ee5cac33e99fa36bdb51bafeb8c8e81 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_98387ef2a86ec003c103eabeeefd6de8 = $(`<div id="html_98387ef2a86ec003c103eabeeefd6de8" style="width: 100.0%; height: 100.0%;">YANKEEBOY BARBERSHOP</div>`)[0];
+            popup_0ee5cac33e99fa36bdb51bafeb8c8e81.setContent(html_98387ef2a86ec003c103eabeeefd6de8);
+        
+
+        marker_389881dfc571907c8777d914c3ca3ecb.bindPopup(popup_0ee5cac33e99fa36bdb51bafeb8c8e81)
+        ;
+
+        
+    
+    
+            var marker_d782e5af025d8d542a8a1bd55da1bba3 = L.marker(
+                [40.6904018, -73.9517085],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_29e6c46f9479e4a391948474d7063249 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_d782e5af025d8d542a8a1bd55da1bba3.setIcon(icon_29e6c46f9479e4a391948474d7063249);
+        
+    
+        var popup_832c11445a19005c6c219ef71ce37b0c = L.popup({"maxWidth": "100%"});
+
+        
+            var html_290ff74ee294512115fda9313e067526 = $(`<div id="html_290ff74ee294512115fda9313e067526" style="width: 100.0%; height: 100.0%;">Classic Trim Barber</div>`)[0];
+            popup_832c11445a19005c6c219ef71ce37b0c.setContent(html_290ff74ee294512115fda9313e067526);
+        
+
+        marker_d782e5af025d8d542a8a1bd55da1bba3.bindPopup(popup_832c11445a19005c6c219ef71ce37b0c)
+        ;
+
+        
+    
+    
+            var marker_b53bb61a7622aec78c2164c6ae1a2ffd = L.marker(
+                [40.6838194, -73.95014760000001],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_fbefa8bde4aba1596e8b1f8304bec5c7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_b53bb61a7622aec78c2164c6ae1a2ffd.setIcon(icon_fbefa8bde4aba1596e8b1f8304bec5c7);
+        
+    
+        var popup_7f0fad410ce6cce9aab374296c2d88c0 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_ac59e0926a569477699883c348ceca0d = $(`<div id="html_ac59e0926a569477699883c348ceca0d" style="width: 100.0%; height: 100.0%;">Rob N Deez Barber Shop</div>`)[0];
+            popup_7f0fad410ce6cce9aab374296c2d88c0.setContent(html_ac59e0926a569477699883c348ceca0d);
+        
+
+        marker_b53bb61a7622aec78c2164c6ae1a2ffd.bindPopup(popup_7f0fad410ce6cce9aab374296c2d88c0)
+        ;
+
+        
+    
+    
+            var marker_786897e3c2284c0c6b2124fee4635e7b = L.marker(
+                [40.680573, -73.943128],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_7be175ad5647901b8695591acacfd682 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_786897e3c2284c0c6b2124fee4635e7b.setIcon(icon_7be175ad5647901b8695591acacfd682);
+        
+    
+        var popup_c97b661b1f482c065755fb10f8b2e8d1 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_c55757bd625871c3372dcf46a79af695 = $(`<div id="html_c55757bd625871c3372dcf46a79af695" style="width: 100.0%; height: 100.0%;">KZ&C Barbershop</div>`)[0];
+            popup_c97b661b1f482c065755fb10f8b2e8d1.setContent(html_c55757bd625871c3372dcf46a79af695);
+        
+
+        marker_786897e3c2284c0c6b2124fee4635e7b.bindPopup(popup_c97b661b1f482c065755fb10f8b2e8d1)
+        ;
+
+        
+    
+    
+            var marker_3ff3745171724fea3bd3b030b5e44bac = L.marker(
+                [40.689218, -73.92993059999999],
+                {}
+            ).addTo(map_8be213f9e78f36136ca7d5a8c3f39f4e);
+        
+    
+            var icon_9967afefb9a15bb4b8210505948a6b63 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "fa-scissors", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_3ff3745171724fea3bd3b030b5e44bac.setIcon(icon_9967afefb9a15bb4b8210505948a6b63);
+        
+    
+        var popup_477d369010ef05aa8400ac7cbea74c4d = L.popup({"maxWidth": "100%"});
+
+        
+            var html_cce59faa2183ec691df44857ef8d9920 = $(`<div id="html_cce59faa2183ec691df44857ef8d9920" style="width: 100.0%; height: 100.0%;">Enkel's Barbershop</div>`)[0];
+            popup_477d369010ef05aa8400ac7cbea74c4d.setContent(html_cce59faa2183ec691df44857ef8d9920);
+        
+
+        marker_3ff3745171724fea3bd3b030b5e44bac.bindPopup(popup_477d369010ef05aa8400ac7cbea74c4d)
+        ;
+
+        
+    
+</script>
